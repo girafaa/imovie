@@ -10,6 +10,7 @@
     <mvc:resources location="/upload/" mapping="/image/**"/>
     <mvc:resources location="/res/css/" mapping="/css/**"/>
     <mvc:resources location="/res/js/" mapping="/js/**"/>
+    <mvc:resources location="/res/assets/" mapping="/assets/**"/>
     
     <context:component-scan base-package="mp.home.controller"></context:component-scan>
     <context:component-scan base-package="mp.member.controller"></context:component-scan>

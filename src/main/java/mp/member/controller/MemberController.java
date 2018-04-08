@@ -1,9 +1,7 @@
 package mp.member.controller;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,27 +58,23 @@ public class MemberController {
 
 	@RequestMapping(value = "/login",method=RequestMethod.POST)
 	public String login(String id, String pw,Model model) {
-		
-		
 		boolean loginflag=memberservice.login(id, pw);
 		session.setAttribute("loginCondition", loginflag);
 		if(!loginflag) { 
-			
             model.addAttribute("re_login_fail", true);
 			return "member/login";
 		}
-		
 		session.setAttribute("loginId", id);
 		request.setAttribute("loginId", id);
 		session.setAttribute("loginGrade", memberservice.myinfo(id).getGrade());
-		session.setAttribute("myInfo", memberservice.myinfo(id));
+//		session.setAttribute("myInfo", memberservice.myinfo(id));
 		
 		String msg="로그인"+(loginflag?"성공":"실패!");
 		log.debug(msg);
 		log.debug("id={}",id);
 		model.addAttribute("re_login_home", loginflag);
 		
-		return "/home";
+		return "redirect:/";
 	}
 //--------------------------------------------------------------------------
 	
@@ -101,19 +95,10 @@ public class MemberController {
 	}
 //-----------------------------------------------------------------------------------------	
 	@RequestMapping(value = {"/myInfo","/myinfo"})//다중매핑(둘중 어느걸로 들어가도 상관 없음)
-	public String myinfo(Model model) {
-		boolean nowLogin =false;
-		try {
-			nowLogin = (boolean)session.getAttribute("loginCondition");
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		if(!nowLogin) {
-			log.debug("먼저 로그인 해주세요");
-			model.addAttribute("re_login_myInfo", true);
-			return "member/login";
-			}
-		
+	public String myinfo(HttpSession session, Model model) {
+		String loginid = (String)session.getAttribute("loginId");
+		Member member = memberservice.myinfo(loginid);
+		model.addAttribute("member",member);
 		return "member/myInfo";
 	}
 	@RequestMapping("/edit")
@@ -154,10 +139,8 @@ public class MemberController {
 			session.removeValue("loginGrade");
 			session.removeValue("loginCondition");
 			session.removeValue("myInfo");
-			memberservice.message(response, "정상적으로 로그아웃 되었습니다");
 			log.debug("로그아웃 완료");
 		} catch (Exception e) {
-			memberservice.message(response, "로그아웃에 실패했습니다");
 		    log.debug("로그아웃 실패");	
 		}
 		model.addAttribute("logout",true);

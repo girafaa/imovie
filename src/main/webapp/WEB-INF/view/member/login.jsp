@@ -1,83 +1,41 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
-
-<c:if test="${logout}">
-
-	<script>
-		location.href = 'login';
-	</script>
-
-</c:if>
-<html>
-
-<head>
-	<title>로그인</title>
 <jsp:include page="/WEB-INF/view/design/nav.jsp"></jsp:include>
-	<!-- 합쳐지고 최소화된 최신 CSS -->
 
-
-</head>
+<link rel="stylesheet" href="assets/css/main.css" />
+<link rel="stylesheet" href="assets/css/user.css" />
 <body>
-<c:if test="${re_login_fail}">
-	<script type="text/javascript">
-		alert('로그인에 실패했습니다.');
-		location.href='login';
-	</script>
-</c:if>
-
-<c:if test="${re_login_login}">
-	<script type="text/javascript">
-		alert('이미 로그인한 상태입니다.');
-		history.back();
-	</script>
-</c:if>
-
-
-<c:if test="${re_login_myInfo}">
-	<script type="text/javascript">
-		alert('먼저 로그인 해주세요');
-		location.href='login';
-	</script>
-</c:if>
-<div align="center">
-	<br>
-	<br>
-	<h1>로그인</h1><br>
-	<br>
-	<br>
-	<form action="login" method="post">
-  
-  	<div class="col-lg-2">
-    
-    	<label class="sr-only" for="id">id</label>
-    	<input type="text" class="form-control" name="id" placeholder="Id" required>
-    	
-  	</div>
-  
-  	<br>
-  
-  	<div class="col-lg-2">
-    	<label class="sr-only" for="pw">pw</label>
-    	<input type="password" class="form-control" name="pw" placeholder="Password" required>
-  	</div>
-  
-  
-  	<br><br>
-  	<button type="submit" class="btn btn-info btn-lg" style="width:16%; height:50px;">로그인</button>
-  	<br>
-   <!--  <label>
-      <input type="checkbox"> Remember me
-    </label> -->
-    <br>
-	</form>
-    <form action="register">
-    <hr style="width: 20%">
-	<br>
-    <button type="submit" class="btn btn-secondary btn-lg" style="width:16%; height: 50px;">회원가입</button>
-    </form>
-
-</div>
+        <div class="empty-row"></div>
+        <div class="empty-row"></div>
+    <div class="container-80 out-align-center">
+        	<h3 class="in-align-center">로그인</h3>
+								<form method="post" action="<c:url value='/login'/>">
+									<div class="row uniform 50%">
+										<div class="12u$">
+											<input type="text" name="id" id="id" value="" placeholder="아이디" required />
+										</div>
+										<div class="12u$">
+											<input type="password" name="pw" id="email" value="" placeholder="비밀번호" required />
+										</div>
+										<div class="4u 12u$(medium)">
+											<input type="checkbox" id="priority-low" name="priority" checked>
+											<label for="priority-low">아이디저장</label>
+										</div>
+										<div class="12u$ in-align-center">
+												<input type="submit" value="로 그 인" class="special" style="width: 49%;display: inline-block;"/></li>
+												<a href="<c:url value='/register'/>"><input type="button" style="width: 49%;display: inline-block;" value="회원가입"/></a></li>
+										</div>
+									</div>
+								</form>
+    </div>
 </body>
 </html>
+
+
+
+
+				
+<jsp:include page="/WEB-INF/view/design/footer.jsp"></jsp:include>
+
+

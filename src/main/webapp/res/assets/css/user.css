@@ -1,0 +1,92 @@
+/*�뒪���씪�떆�듃瑜� 留뚮뱾�뼱蹂댁옄.*/
+
+@charset "UTF-8";
+
+/*-------------------------------留곹겕 �뒪���씪-------------------------------*/
+a{
+    text-decoration: none;
+    color: black;
+}
+a:hover{
+    color: blue;
+}
+
+/*�뀒�씠釉� �뒪���씪 */
+
+/*-------------------------------�뤌 �뒪���씪-------------------------------*/
+
+/*�엯�젰李�*/
+/*
+�룺100%吏쒕━�옉
+�씤�씪�씤(inline)�슜 援щ텇
+*/
+.form-input, .form-btn{
+/*    �씤�씪�씤�슜*/
+    font-size: 25px;
+    padding: 10px;
+    
+    border: 1px solid black;
+}
+.form-input-full, .form-btn-full{
+    width: 100%;
+}
+
+
+
+
+/*踰꾪듉*/
+.form-btn{
+    background-color: lightblue;
+}
+
+
+
+
+/*-------------------------------�쁺�뿭 �뒪���씪------------------------------
+
+div�쓽 �솗�옣
+nav: 硫붾돱�슜
+main: 硫붿씤�럹�씠吏�
+...
+*/
+div, nav, header, footer, aside, article, section, main{
+/*    �뀒�뒪�듃�슜 �뀒�몢由� 異붽�*/
+    border: 1px dotted black;
+}
+
+/*�쁺�뿭�쓣 鍮꾩쑉蹂꾨줈 吏��젙*/
+.container-10{width:10%;}
+.container-20{width:20%;}
+.container-30{width:30%;}
+.container-40{width:40%;}
+.container-50{width:50%;}
+.container-60{width:60%;}
+.container-70{width:70%;}
+.container-80{width:80%;}
+.container-90{width:90%;}
+.container-100{width:100%;}
+
+/* 而⑦뀒�씠�꼫 �젙�젹 : out-align-? */
+.out-align-left{}
+.out-align-center{margin: auto;}
+.out-align-right{}
+
+/* �궡�슜臾� �젙�젹 : in-align-? */
+.in-align-left{text-align: left;}
+.in-align-center{text-align: center;}
+.in-align-right{text-align: right;}
+
+
+
+/*怨듬갚 以�*/
+.empty-row{height: 50px;}
+
+.row{margin:10px; }/* �쐞�븘�옒 �슂�냼 以꾧뎄遺� �쐞�빐 */
+
+
+/*
+湲�瑗� �쟻�슜(�뼱�뼡�럹�씠吏��뜕媛꾩뿉 �옒 �쟻�슜�릺�룄濡� �븳�떎�뒗�뜲... 
+�뼵�젣 �쟻�슜�씠 �븞�릺�뒗 吏��뒗 �븘吏� �옒 紐⑤Ⅴ寃좊떎.)
+
+
+*/
