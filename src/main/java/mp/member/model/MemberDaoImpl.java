@@ -22,10 +22,11 @@ public class MemberDaoImpl implements MemberDao{
 	
 	@Override
 	public void register(Member member) {
-		
+	
 		String sql="insert into member values('m'||LPAD(member_seq.nextval, '10', '0')"
 				+ ",?,?,?,?,?,0,'일반',sysdate)";//no는 m000000001, m000000002,...등으로 입력
-		Object[] args = {member.getId(),member.getPw(),
+		Object[] args = {member.getId(),
+				//비밀번호 암호화
 				member.getBirth(),member.getPhone(),member.getEmail()};
 		
 		jdbcTemplate.update(sql,args);

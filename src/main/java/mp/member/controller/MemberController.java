@@ -2,6 +2,7 @@ package mp.member.controller;
 
 
 import java.io.IOException;
+import java.security.PrivateKey;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +16,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import mp.member.bean.Member;
 import mp.member.model.MemberDao;
 import mp.member.service.MemberService;
+import mp.util.RSA;
+import mp.util.RSAUtil;
 
 @Controller
 public class MemberController {
@@ -29,51 +33,67 @@ public class MemberController {
 	private HttpServletRequest request;
 	@Autowired
 	private HttpServletResponse response;
-
 	
 	@Autowired
 	private MemberDao memDao;
 	@Autowired
 	private MemberService memberservice;
 	
+	private RSAUtil rsaUtil = new RSAUtil();
+	
 	@RequestMapping("/login")
 	public String login(Model model) throws IOException {
-		
-		boolean nowLogin=false;
-		try {
-			nowLogin = (boolean)session.getAttribute("loginCondition");
-			log.debug("login={}",nowLogin);
-		}catch (Exception e) {
-			// TODO: handle exception
-		}
-		if(nowLogin) {
-			String id = (String) session.getAttribute("loginId");
-			model.addAttribute("re_login_login", true);
-			log.debug("{}님이 이미 로그인 한 상태 입니다. 먼저 로그아웃 해주세요",id);	
-			return "member/login";
-			}
+	    // RSA 키 생성
+	    PrivateKey key = (PrivateKey) session.getAttribute("RSAprivateKey");
+	    if (key != null) { // 기존 key 파기
+	        session.removeAttribute("RSAprivateKey");
+	    }
+	    RSA rsa = rsaUtil.createRSA();		//새로운 키값 가진 rsa생성
+	    model.addAttribute("modulus", rsa.getModulus());	
+	    model.addAttribute("exponent", rsa.getExponent());
+	    log.debug("modulus : "+rsa.getModulus());	  //b982da0e804995c38d8478e89dd27151857cbceac228a37384ed31b440dda953c9ddb61db66ea3ebe1a2c0c4270e04456bd93fe5cdde97e3a904e38e649eecfd3570de65adfd39b4e246f60d02be4e8e69a44ab8cffe17e90cc23f4bb2ff3136aa7e7efa4cd76ec239f33c736f182768a45d2284050971952adc2043ca3352f9
+	    log.debug("exponent : "+rsa.getExponent());	    //10001
+	    log.debug("privateKey : "+rsa.getPrivateKey());	 //sun.security.rsa.RSAPrivateCrtKeyImpl@fff48b8c
+	    session.setAttribute("RSAprivateKey", rsa.getPrivateKey());
+	
 		return "member/login";
 		
 	}
 
 	@RequestMapping(value = "/login",method=RequestMethod.POST)
-	public String login(String id, String pw,Model model) {
-		boolean loginflag=memberservice.login(id, pw);
-		session.setAttribute("loginCondition", loginflag);
-		if(!loginflag) { 
-            model.addAttribute("re_login_fail", true);
-			return "member/login";
-		}
-		session.setAttribute("loginId", id);
-		request.setAttribute("loginId", id);
-		session.setAttribute("loginGrade", memberservice.myinfo(id).getGrade());
-//		session.setAttribute("myInfo", memberservice.myinfo(id));
-		
-		String msg="로그인"+(loginflag?"성공":"실패!");
-		log.debug(msg);
-		log.debug("id={}",id);
-		model.addAttribute("re_login_home", loginflag);
-		
+	public String login(String id, String pw, RedirectAttributes ra,Model model) {
+		   // 개인키 취득
+	    PrivateKey key = (PrivateKey) session.getAttribute("RSAprivateKey");
+	    if (key == null) {
+	        ra.addFlashAttribute("resultMsg", "비정상 적인 접근 입니다.");		//이게머지
+	        return "redirect:member/login";
+	    }
+	 
+	    // session에 저장된 개인키 초기화
+	    session.removeAttribute("RSAprivateKey");
+	    String idOrigin="";
+	    String pwOrigin="";
+	    // 아이디/비밀번호 복호화
+	    try {
+	        idOrigin = rsaUtil.getDecryptText(key, id);
+	        pwOrigin = rsaUtil.getDecryptText(key, pw);
+	    } catch (Exception e) {
+	        ra.addFlashAttribute("resultMsg", "비정상 적인 접근 입니다.");
+	        return "redirect:member/login";
+	    }
+	    log.debug("idOrigin : {}",idOrigin);
+	    log.debug("pwOrigin : {}",pwOrigin);
+
+		boolean loginflag=memberservice.login(idOrigin, pwOrigin);
+	    log.debug("loginflag : {}",loginflag);
+//		session.setAttribute("loginCondition", loginflag);
+	    if(loginflag) {
+	    	session.setAttribute("loginId", idOrigin);
+	    	session.setAttribute("loginGrade", memberservice.myinfo(idOrigin).getGrade());
+	    }else {
+	        ra.addFlashAttribute("resultMsg", "로그인실패");
+	    	return "redirect:member/login";
+	    }
 		return "redirect:/";
 	}
 //--------------------------------------------------------------------------
@@ -87,7 +107,7 @@ public class MemberController {
 		boolean flag = memberservice.register(id, pw, birth, phone, email);
 		if(flag) {
 		  model.addAttribute("re_reg_reg", "ok");	
-		  return "/home";
+		  return "redirect:/home";
 		}else {
 			model.addAttribute("re_reg_reg", "no");	
 		return "member/register";
@@ -130,21 +150,22 @@ public class MemberController {
 	public String logout(Model model) {
 		boolean flag = false;
 		try {
-			flag = (boolean) session.getAttribute("loginCondition");
+			flag = session.getAttribute("loginId")!=null;
 			if(!flag) {
 				log.debug("로그인상태가 아닙니다.");
 				throw new Exception();
-				}
-			session.removeValue("loginId");
-			session.removeValue("loginGrade");
-			session.removeValue("loginCondition");
-			session.removeValue("myInfo");
+			}
+			session.invalidate();
+//			session.removeValue("loginId");
+//			session.removeValue("loginGrade");
+//			session.removeValue("loginCondition");
+//			session.removeValue("myInfo");
 			log.debug("로그아웃 완료");
 		} catch (Exception e) {
 		    log.debug("로그아웃 실패");	
 		}
-		model.addAttribute("logout",true);
-		return "member/login";
+
+		return "redirect:/login";
 	}
 	@RequestMapping({"/idCheck","/idcheck","/id_check"})
 	public String idCheck(String id,Model model) {

@@ -49,7 +49,7 @@
 					<div class="container">
 						<header class="major">
 							<h2>IMOVIE</h2>
-							<p>은경이 홈페이지</p>
+							<p>I LOVE MOVIE</p>
 						</header>
 						<div class="area">
                             <div class="swiper-container">
