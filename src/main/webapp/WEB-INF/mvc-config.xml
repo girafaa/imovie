@@ -7,7 +7,9 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <mvc:annotation-driven />
+    
     <mvc:resources location="/upload/" mapping="/image/**"/>
+    <mvc:resources location="/res/icon/" mapping="/icon/**"/>
     <mvc:resources location="/res/css/" mapping="/css/**"/>
     <mvc:resources location="/res/js/" mapping="/js/**"/>
     <mvc:resources location="/res/assets/" mapping="/assets/**"/>

@@ -24,7 +24,7 @@
 </style>
 <link rel="stylesheet" href="assets/css/main.css" />
 <link rel="stylesheet" href="assets/css/user.css" />
-<body>
+
   <div id="main" class="wrapper style1">
 	<div class="out-align-center in-align-center table-wrapper ">
         <h1 class="in-align-center">내 정보</h1>

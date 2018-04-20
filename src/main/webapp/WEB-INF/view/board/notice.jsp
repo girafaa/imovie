@@ -1,25 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<html>
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- 위 3개의 메타 태그는 *반드시* head 태그의 처음에 와야합니다; 어떤 다른 콘텐츠들은 반드시 이 태그들 *다음에* 와야 합니다 -->
-<title>notice게시판</title>
-
-<!-- 부트스트랩 -->
+<!-- 글자 자르는 태그 -->
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:include page="/WEB-INF/view/design/nav.jsp"></jsp:include>
-<div align="center">
-<br><br>
-	<h1>공지사항</h1>
-</div>
-<hr>
-<br>
 
-</head>
-<body>
+
 	<c:if test="${re_no}">
 		<script type="text/javascript">
 		location.href = 'notice';
@@ -63,29 +49,39 @@
 	</c:choose>
 
 	<!--전체를 감는 div-->
-	 
-	<div align="center">
-		<!-- ==================================================== -->
-		<!--   게시판 글 목록-->
-		<table class="table table-striped table-bordered table-hover"
-			style="width: 800px">
+<link rel="stylesheet" href="assets/css/main.css" />
+<link rel="stylesheet" href="assets/css/user.css" />
+<style>
+		.table-wrapper{
+			width:80%;
+		}
+        @media screen and (max-width:740px){
+            .table-wrapper{
+                width:80%;
+            }
 
-			<thead>
+        }
+        @media screen and (max-width:570px){
+            .table-wrapper{
+                width:100%;
+            }
 
-				<tr>
-					<th width="10%">번호</th>
-					<th width="50%">제목</th>
-					<th width="20%">작성일</th>
-					<th width="20%">조회</th>
+        }
+
+</style>
+  <div id="main" class="wrapper style1">
+	<div class="out-align-center in-align-center table-wrapper ">
+        <h1 class="in-align-center">공지사항</h1>
+      <table id="table">
+      	<thead>
+      			<tr>
+					<th scope="row"  width="18%">번호</th>
+					<th scope="row"  width="46%">제목</th>
+					<th scope="row"  width="20%">작성일</th>
+					<th scope="row"  width="16%">조회</th>
 				</tr>
-
-			</thead>
-
-			<!-- 샘플로 넣은 데이터-->
-
-
-
-			<tbody>
+      	</thead>
+      	<tbody>
 				<c:forEach var="noticeitem" items="${noticelist}">
 					<tr>
 						<td>${noticeitem.no}</td>
@@ -95,37 +91,31 @@
 						<td>${noticeitem.read}</td>
 					</tr>
 				</c:forEach>
-
-
-
-			</tbody>
-
-
+		</tbody>
 		</table>
-
+		
+		
+		
+		
 		<!-- ==================================================== -->
+					
+				<div class="empty-row"></div>
 		<!-- 검색 기능 -->
-		<div class=".col-lg-6" align="center" style="width: 500px">
-			<form action="<c:url value='/notice'></c:url>" class="form-inline input-group" style="position: relative;">
-
+			  <form action="<c:url value='/notice'></c:url>">
 				<!--       검색 옵션 선택(드롭다운)-->
-					<div class="input-group-btn">
-
-						<div class="dropdown" style="width: 90px;">
-							<select class="form-control" name="search">
-								<option value="title">제목</option>
-								<option value="content">내용</option>
-								<option value="head">말머리</option>
-							</select>
-						</div>
-
+				<div style="width: 20%; display:inline-block;">
+					<div class="select-wrapper">
+						<select name="search">
+							<option value="title">제목</option>
+							<option value="content">내용</option>
+							<option value="head">말머리</option>
+						</select>
 					</div>
+				</div>
 				<!-- 검색할 단어 입력-->
-				<input type="text" class="form-control"name="keyword" placeholder="Search for...">
+				<input type="text" style="width: 60%; display:inline-block;"class="form-control"name="keyword"  placeholder="검색어">
+				<input style="width:10%; display:inline-block;" type="submit" value="검색"/>
 
-				<span class="input-group-btn"> <!-- 검색버튼-->
-					<button class="btn btn-Info" type="submit">검색</button>
-				</span>
 
 			</form>
 			<!-- /input-group -->
@@ -172,11 +162,18 @@
 				</ul>
 			</nav>
 		</div>
-		<!-- ==================================================== -->
+		
+
+
 	</div>
 	<!--/bs-example -->
 
 	<!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
 	
+
+
+
 </body>
 </html>
+			
+<jsp:include page="/WEB-INF/view/design/footer.jsp"></jsp:include>

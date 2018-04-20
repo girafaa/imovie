@@ -105,7 +105,6 @@ public class MovieServiceImpl implements MovieService {
 			throw new Exception();
 		}
 		String savename = UUID.randomUUID().toString();
-		
 		//실제로 저장하는 작업
 		File dir = new File(posterpath);
 		if(!dir.exists()) dir.mkdirs();

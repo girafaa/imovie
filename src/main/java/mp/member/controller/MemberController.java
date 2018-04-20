@@ -66,7 +66,7 @@ public class MemberController {
 	    PrivateKey key = (PrivateKey) session.getAttribute("RSAprivateKey");
 	    if (key == null) {
 	        ra.addFlashAttribute("resultMsg", "비정상 적인 접근 입니다.");		//이게머지
-	        return "redirect:member/login";
+	        return "redirect:/login";
 	    }
 	 
 	    // session에 저장된 개인키 초기화
@@ -79,20 +79,20 @@ public class MemberController {
 	        pwOrigin = rsaUtil.getDecryptText(key, pw);
 	    } catch (Exception e) {
 	        ra.addFlashAttribute("resultMsg", "비정상 적인 접근 입니다.");
-	        return "redirect:member/login";
+	        return "redirect:/login";
 	    }
 	    log.debug("idOrigin : {}",idOrigin);
 	    log.debug("pwOrigin : {}",pwOrigin);
 
 		boolean loginflag=memberservice.login(idOrigin, pwOrigin);
 	    log.debug("loginflag : {}",loginflag);
-//		session.setAttribute("loginCondition", loginflag);
+		session.setAttribute("loginCondition", loginflag);
 	    if(loginflag) {
 	    	session.setAttribute("loginId", idOrigin);
 	    	session.setAttribute("loginGrade", memberservice.myinfo(idOrigin).getGrade());
 	    }else {
 	        ra.addFlashAttribute("resultMsg", "로그인실패");
-	    	return "redirect:member/login";
+	    	return "redirect:/login";
 	    }
 		return "redirect:/";
 	}

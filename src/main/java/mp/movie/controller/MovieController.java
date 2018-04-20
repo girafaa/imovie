@@ -32,7 +32,7 @@ public class MovieController {
 		//파일 업로드시에 pom.xml에 commons-io, commons-fileupload 추가
 		//mvc-config.xml에 multipartResolver추가
 		String posterpath = session.getServletContext().getRealPath("upload");
-		log.debug(posterpath);
+		log.debug("posterpath : {}",posterpath);
 		String uploader = (String)session.getAttribute("loginId");
 		log.debug(uploader);
 		String movieid = movieService.register(title, open, close, director, actor, genre, 
@@ -85,6 +85,7 @@ public class MovieController {
 			String nation, String distributor, String productor, String story, 
 			String posterpath, MultipartFile poster, String postername, 
 			String uploader, String price, HttpSession session) throws Exception {
+		
 		posterpath = session.getServletContext().getRealPath("upload");
 		movieService.edit(id, title, open, close, director, actor, genre, 
 				rate, time, nation, distributor, productor, story, posterpath, 

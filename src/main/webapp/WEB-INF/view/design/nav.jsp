@@ -14,16 +14,12 @@
 
 			<!-- 상단 메뉴바 -->
 				<header id="header">
-					<h1 id="logo"><a href="index.html">IMOVIE</a></h1>
+					<h1 id="logo"><a href="<c:url value='/'/>">IMOVIE</a></h1>
 					<nav id="nav">
 						<ul>
 							<li><a href="<c:url value='/'/>">홈</a></li>
 							<li>
 								<a href="<c:url value='/ticket'/>">예매</a>
-								<ul>
-									<li><a href="#">상영시간표</a></li>
-									<li><a href="<c:url value='/ticket'/>">예매하기</a></li>
-								</ul>
 							</li>
 							<li><a href="<c:url value='/movie'/>">영화</a></li>
 							<li><a href="<c:url value='/notice'/>">게시판</a>

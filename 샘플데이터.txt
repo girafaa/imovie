@@ -1,0 +1,600 @@
+-- 계정 만들기 
+connect system/oracle;
+create user sw32 identified by sw32;
+grant dba to sw32;
+
+
+-- 새 계정 로그인
+conn sw32/sw32; 
+
+
+-- 여기서부터 복붙
+--테이블 드롭 (외래키 때문에 삭제 순서 중요)
+drop table schedule;
+drop sequence schedule_seq;
+drop table payment;
+drop sequence payment_seq;
+drop table qna;
+drop sequence qna_seq;
+drop table notice;
+drop sequence notice_seq;
+drop table seat;
+drop sequence seat_seq;
+drop table screen;
+drop sequence screen_seq;
+drop table theater;
+drop sequence theater_seq;
+drop table review;
+drop sequence review_seq;
+drop table movie;
+drop sequence movie_seq;
+drop table member;
+drop sequence member_seq;
+
+
+-- table, sequence 생성
+create sequence member_seq nocache;
+create table member 
+(no varchar2(11) primary key, 
+id varchar2(12) not null unique, 
+pw varchar2(100) not null, 
+birth date not null, 
+phone varchar2(11) not null, 
+email varchar2(50) not null, 
+point number not null, 
+grade varchar2(30) not null, 
+reg date not null);
+
+create sequence movie_seq nocache;
+create table movie 
+(id varchar2(11) primary key, 
+title varchar2(100) not null, 
+open date not null, 
+close date not null, 
+director varchar2(30) not null, 
+actor varchar2(150) not null, 
+genre varchar2(30) not null, 
+rate varchar2(20) not null, 
+time number not null, 
+nation varchar2(60) not null, 
+distributor varchar2(60) not null, 
+productor varchar2(60) not null, 
+story varchar2(400) not null, 
+posterpath varchar2(256), 
+poster varchar2(256), 
+postername varchar2(256), 
+uploader constraint fk_movie_uploader references member(no) on delete set null, 
+price number not null);
+
+create sequence review_seq nocache;
+create table review 
+(id varchar2(11) primary key, 
+star number not null, 
+writer constraint fk_review_writer references member(no) on delete cascade, 
+content varchar2(210) not null, 
+movieid constraint fk_review_movieid references movie(id) on delete cascade, 
+reg date not null);
+
+create sequence theater_seq nocache;
+create table theater 
+(id varchar2(11) primary key, 
+name varchar2(50) not null unique, 
+region varchar2(30) not null, 
+address varchar2(300) not null, 
+tel varchar2(11) not null, 
+manager unique constraint fk_theater_manager references member(no) on delete set null);
+
+create sequence screen_seq nocache;
+create table screen 
+(id varchar2(11) primary key, 
+no number not null, 
+theaterid constraint fk_screen_theaterid references theater(id) on delete cascade, 
+seats number not null, 
+uploader constraint fk_screen_uploader references member(no) on delete set null);
+
+create sequence seat_seq nocache;
+create table seat 
+(id varchar2(11) primary key, 
+screenid constraint fk_seat_creenid references screen(id) on delete cascade, 
+reallocation varchar2(3), 
+servicelocation varchar2(3), 
+seatdiscount number not null);
+
+create sequence notice_seq nocache;
+create table notice 
+(no number primary key, 
+head varchar2(30) not null, 
+title varchar2(90) not null, 
+content varchar2(4000) not null, 
+uploadpath varchar2(256), 
+upload varchar2(256),  
+reg date not null, 
+read number not null, 
+writer constraint fk_notice_writer references member(no) on delete cascade);
+
+create sequence qna_seq nocache;
+create table qna 
+(no number primary key, 
+head varchar2(30) not null, 
+title varchar2(150) not null, 
+secret varchar2(5) not null, 
+content varchar2(4000) not null, 
+reg date not null, 
+read number not null, 
+writerno constraint fk_qna_writer references member(no) on delete cascade, 
+writerid varchar2(12) not null, 
+parent number not null, 
+gno number not null);
+
+create sequence schedule_seq nocache;
+create table schedule 
+(id varchar2(11) primary key, 
+movie constraint fk_schedule_movie references movie(id) on delete cascade, 
+theater constraint fk_schedule_theater references theater(id) on delete cascade, 
+screen constraint fk_schedule_screen references screen(id) on delete cascade, 
+day date not null, 
+starttime varchar2(5) not null, 
+endtime varchar2(5) not null, 
+morning number not null, 
+night number not null, 
+uploader constraint fk_schedule_uploader references member(no) on delete set null);
+
+create sequence payment_seq nocache;
+create table payment 
+(id varchar2(11) primary key, 
+memberid varchar2(12) not null, 
+movieid varchar2(11) not null, 
+theaterid varchar2(11) not null, 
+screenid varchar2(11) not null, 
+seatid varchar2(11) not null,
+scheduleid varchar2(11) not null, 
+paydate varchar2(10) not null, 
+paytotal number not null);
+
+
+--샘플데이터
+
+
+--멤버 추가
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'admin','1q2w3e4r!','1993-01-07','01012341234','admin@test.com',0,'관리자',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'movie','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'영화사',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater1','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater2','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater3','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater4','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater5','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater6','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater7','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater8','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater9','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater10','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater11','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'theater12','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'지점장',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'test','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'일반',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'test1','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'일반',sysdate);
+insert into member values('m'||LPAD(member_seq.nextval, '10', '0'),'test2','1q2w3e4r!','1993-01-01','01012341234','test@test.com',0,'일반',sysdate);
+
+
+
+--영화 추가
+insert into movie values ('v'||LPAD(movie_seq.nextval, '10', '0'), '조선명탐정', '2018-02-15', '2018-05-30', '김석윤','김명민', '코미디', '7.6', 120, '한국', 'distributor', 'productor', '목에 난 두 개의 이빨 자국, 심장을 관통한 화살촉에 새겨진 글자. 
+“범인은 뭔가 말하고 싶어한다. 그렇다면 이것은 … 예고살인?!”', 'posetpath','poster','postername','m0000000001',8000);
+
+insert into movie values ('v'||LPAD(movie_seq.nextval, '10', '0'), '레디 플레이어 원', '2018-03-15', '2018-05-30', '스티븐 스필버그','마이 라이런스', '액션', '8.6', 140, '미국', 'distributor', 'productor', '2045년, 암울한 현실과 달리 가상현실 오아시스(OASIS)에서는 누구든 원하는 캐릭터로 어디든지 갈 수 있고, 뭐든지 할 수 있고 상상하는 모든 게 가능하다. 웨이드 와츠(타이 쉐리던) 역시 유일한 낙은 대부분의 사람들이 하루를 보내는 오아시스에 접속하는 것이다.', 'posetpath','poster','postername','m0000000001',8000);
+
+insert into movie values ('v'||LPAD(movie_seq.nextval, '10', '0'), '곤지암', '2018-03-15', '2018-05-30', '정범식','위하준', '공포', '6.7', 94, '한국', 'distributor', 'productor', '1979년 환자 42명의 집단 자살과 병원장의 실종 이후, 섬뜩한 괴담으로 둘러싸인 곤지암 정신병원으로 공포체험을 떠난 7명의 멤버들', 'posetpath','poster','postername','m0000000001',8000);
+
+insert into movie values ('v'||LPAD(movie_seq.nextval, '10', '0'), '지금 만나러 갑니다.', '2018-03-15', '2018-05-30', '이장훈','손예진', '멜로', '8.7', 131, '한국', 'distributor', 'productor', '비가 오는 날 다시 돌아오겠다는 믿기 힘든 약속을 남기고 세상을 떠난 수아, 그로부터 1년 뒤 장마가 시작되는 어느 여름 날,
+세상을 떠나기 전과 다름없는 모습의 수아가 나타난다. 하지만 수아는 우진이 누구인지조차도 기억하지 못한다.', 'posetpath','poster','postername','m0000000001',8000);
+
+
+insert into movie values ('v'||LPAD(movie_seq.nextval, '10', '0'), '50가지 그림자:해방', '2018-03-15', '2018-05-30', '제임스 폴리','다코타 존슨', '드라마', '7.8', 105, '미국', 'distributor', 'productor', '모든 과거를 잊고 서로에게 더 깊게 빠져든 크리스찬 그레이와 아나스타샤. 그레이의 독특한 취향으로 시작된 이 비밀스러운 관계는
+더 큰 자극을 원하는 아나스타샤로 인해 역전되고...', 'posetpath','poster','postername','m0000000001',8000);
+
+
+insert into movie values ('v'||LPAD(movie_seq.nextval, '10', '0'), '쓰리빌보드', '2018-03-15', '2018-05-30', '마린 맥도나','프랜시스 맥도먼드', '드라마', '8.7', 115, '미국', 'distributor', 'productor', '범인을 잡지 못한 딸의 살인 사건에 세상의 관심이 사라지자, 엄마 ‘밀드레드’(프란시스 맥도맨드)는 아무도 사용하지 않는 마을 외곽 대형 광고판에 도발적인 세 줄의 광고를 실어 메시지를 전한다.', 'posetpath','poster','postername','m0000000001',8000);
+
+
+
+-- 리뷰 등록
+
+
+
+-- 영화관 등록
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '가디점', '서울', '서울시 금천구 가산동', '0212341234', 'm0000000003');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '구로점', '서울', '서울시 구로구', '0212341234', 'm0000000004');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '노원점', '서울', '서울시 노원구', '0212341234', 'm0000000005');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '상계점', '서울', '서울시 누원구 상계동', '0212341234', 'm0000000006');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '상도점', '서울', '서울시 상도동', '0212341234', 'm0000000007');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '서울역점', '서울', '서울시 서울역앞', '0212341234', 'm0000000008');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '신림점', '서울', '서울시 신림동', '0212341234', 'm0000000009');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '강남점', '서울', '서울시 강남구', '0212341234', 'm0000000010');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '하계점', '서울', '서울시 노원구 하계동', '0212341234', 'm0000000011');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '신촌점', '서울', '서울시 서대문구', '0212341234', 'm0000000012');
+insert into theater values ('t'||LPAD(theater_seq.nextval, '10', '0'), '건대점', '서울', '서울시 건대', '0212341234', 'm0000000013');
+
+-- 상영관 등록
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 1, 't0000000001', 0, 'm0000000003');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 2, 't0000000001', 0, 'm0000000003');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 3, 't0000000001', 0, 'm0000000003');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 4, 't0000000001', 0, 'm0000000003');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 5, 't0000000001', 0, 'm0000000003');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 1, 't0000000002', 0, 'm0000000004');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 2, 't0000000002', 0, 'm0000000004');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 3, 't0000000002', 0, 'm0000000004');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 4, 't0000000002', 0, 'm0000000004');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 5, 't0000000002', 0, 'm0000000004');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 6, 't0000000002', 0, 'm0000000004');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 7, 't0000000002', 0, 'm0000000004');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 1, 't0000000003', 0, 'm0000000005');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 2, 't0000000003', 0, 'm0000000005');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 3, 't0000000003', 0, 'm0000000005');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 4, 't0000000003', 0, 'm0000000005');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 5, 't0000000003', 0, 'm0000000005');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 6, 't0000000003', 0, 'm0000000005');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 7, 't0000000003', 0, 'm0000000005');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 1, 't0000000004', 0, 'm0000000006');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 2, 't0000000004', 0, 'm0000000006');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 3, 't0000000004', 0, 'm0000000006');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 4, 't0000000004', 0, 'm0000000006');
+insert into screen values ('c'||LPAD(screen_seq.nextval, '10', '0'), 5, 't0000000004', 0, 'm0000000006');
+
+-- 상영시간표 등록
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000001','t0000000001','c0000000001','2018-03-30','13:30','15:30',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000001','t0000000001','c0000000001','2018-03-30','17:30','19:30',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000001','t0000000001','c0000000001','2018-03-31','14:30','15:30',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000001','t0000000001','c0000000001','2018-03-31','16:30','19:30',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000002','t0000000001','c0000000002','2018-03-30','11:30','15:30',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000002','t0000000001','c0000000002','2018-03-30','17:30','19:30',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000001','t0000000001','c0000000001','2018-04-30','11:30','13:30',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000001','t0000000001','c0000000001','2018-04-30','13:40','15:40',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000001','t0000000001','c0000000001','2018-04-30','17:30','19:30',3000,3000,'m0000000001');
+
+insert into schedule values ('d'||LPAD(schedule_seq.nextval,'10','0'),'v0000000001','t0000000001','c0000000001','2018-04-30','22:00','23:30',3000,3000,'m0000000001');
+
+
+-- 결제 등록--------------------
+
+insert into payment values ('p'||LPAD(payment_seq.nextval,'10','0'),'test','v0000000001','t0000000001','c0000000001','s0000000001','d0000000001','2018-03-30',8000);
+
+
+insert into payment values ('p'||LPAD(payment_seq.nextval,'10','0'),'test','v0000000001','t0000000001','c0000000001','s0000000002','d0000000001','2018-03-30',8000);
+
+
+insert into payment values ('p'||LPAD(payment_seq.nextval,'10','0'),'test','v0000000001','t0000000001','c0000000001','s0000000003','d0000000001','2018-03-30',8000);
+
+
+insert into payment values ('p'||LPAD(payment_seq.nextval,'10','0'),'test','v0000000001','t0000000001','c0000000001','s0000000004','d0000000001','2018-03-30',8000);
+
+
+insert into payment values ('p'||LPAD(payment_seq.nextval,'10','0'),'test','v0000000001','t0000000001','c0000000001','s0000000005','d0000000001','2018-04-02',8000);
+
+
+insert into payment values ('p'||LPAD(payment_seq.nextval,'10','0'),'test','v0000000001','t0000000001','c0000000001','s0000000006','d0000000001','2018-04-02',8000);
+
+
+
+
+-- 좌석 등록
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a2','a1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a3','a2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a4','a3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a5','a4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a6','a5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a7','a6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a8','a7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a9','a8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a10','a9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a11','a10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a12','a11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a13','a12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a14','a13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a15','a14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a16','a15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a17','a16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a18','a17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a19','a18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a20','a19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a21','a20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','a22','a21',3000);
+
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b2','b1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b3','b2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b4','b3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b5','b4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b6','b5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b7','b6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b8','b7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b9','b8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b10','b9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b11','b10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b12','b11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b13','b12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b14','b13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b15','b14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b16','b15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b17','b16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b18','b17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b19','b18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b20','b19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b21','b20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','b22','b21',3000);
+
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c2','c1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c3','c2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c4','c3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c5','c4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c6','c5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c7','c6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c8','c7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c9','c8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c10','c9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c11','c10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c12','c11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c13','c12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c14','c13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c15','c14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c16','c15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c17','c16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c18','c17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c19','c18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c20','c19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c21','c20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','c22','c21',3000);
+
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d2','d1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d3','d2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d4','d3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d5','d4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d6','d5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d7','d6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d8','d7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d9','d8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d10','d9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d11','d10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d12','d11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d13','d12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d14','d13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d15','d14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d16','d15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d17','d16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d18','d17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d19','d18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d20','d19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d21','d20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','d22','d21',3000);
+
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e2','e1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e3','e2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e4','e3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e5','e4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e6','e5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e7','e6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e8','e7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e9','e8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e10','e9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e11','e10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e12','e11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e13','e12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e14','e13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e15','e14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e16','e15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e17','e16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e18','e17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e19','e18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e20','e19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e21','e20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e22','e21',3000);
+
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e1','e1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e2','e2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e3','e3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e4','e4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e5','e5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e6','e6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e7','e7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e8','e8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e9','e9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e10','e10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e11','e11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e12','e12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e13','e13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e14','e14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e15','e15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e16','e16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e17','e17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e18','e18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e19','e19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e20','e20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e21','e21',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e22','e20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','e23','e21',3000);
+
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f1','f1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f2','f2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f3','f3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f4','f4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f5','f5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f6','f6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f7','f7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f8','f8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f9','f9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f10','f10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f11','f11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f12','f12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f13','f13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f14','f14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f15','f15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f16','f16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f17','f17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f18','f18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f19','f19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f20','f20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f21','f21',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f22','f20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','f23','f21',3000);
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g1','g1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g2','g2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g3','g3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g4','g4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g5','g5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g6','g6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g7','g7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g8','g8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g9','g9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g10','g10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g11','g11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g12','g12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g13','g13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g14','g14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g15','g15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g16','g16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g17','g17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g18','g18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g19','g19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g20','g20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g21','g21',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g22','g20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','g23','g21',3000);
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h1','h1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h2','h2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h3','h3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h4','h4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h5','h5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h6','h6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h7','h7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h8','h8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h9','h9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h10','h10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h11','h11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h12','h12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h13','h13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h14','h14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h15','h15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h16','h16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h17','h17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h18','h18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h19','h19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h20','h20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h21','h21',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h22','h20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','h23','h21',3000);
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i1','i1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i2','i2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i3','i3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i4','i4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i5','i5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i6','i6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i7','i7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i8','i8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i9','i9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i10','i10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i11','i11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i12','i12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i13','i13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i14','i14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i15','i15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i16','i16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i17','i17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i18','i18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i19','i19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i20','i20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i21','i21',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i22','i20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','i23','i21',3000);
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j1','j1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j2','j2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j3','j3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j4','j4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j5','j5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j6','j6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j7','j7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j8','j8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j9','j9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j10','j10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j11','j11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j12','j12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j13','j13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j14','j14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j15','j15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j16','j16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j17','j17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j18','j18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j19','j19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j20','j20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j21','j21',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j22','j20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','j23','j21',3000);
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k1','k1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k2','k2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k3','k3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k4','k4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k5','k5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k6','k6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k7','k7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k8','k8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k9','k9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k10','k10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k11','k11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k12','k12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k13','k13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k14','k14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k15','k15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k16','k16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k17','k17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k18','k18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k19','k19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k20','k20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k21','k21',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k22','k20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','k23','k21',3000);
+
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l1','l1',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l2','l2',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l3','l3',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l4','l4',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l5','l5',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l6','l6',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l7','l7',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l8','l8',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l9','l9',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l10','l10',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l11','l11',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l12','l12',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l13','l13',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l14','l14',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l15','l15',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l16','l16',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l17','l17',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l18','l18',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l19','l19',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l20','l20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l21','l21',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l22','l20',3000);
+insert into seat values ('s'||LPAD(seat_seq.nextval,'10','0'),'c0000000001','l23','l21',3000);
+
+
+
+commit;
+
