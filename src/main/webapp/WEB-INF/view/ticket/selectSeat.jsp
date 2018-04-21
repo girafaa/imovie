@@ -3,12 +3,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/view/design/nav.jsp"></jsp:include>
 
+<link rel="stylesheet" href="assets/css/main.css" />
+<link rel="stylesheet" href="assets/css/user.css" /><!-- 글자 자르는 태그 -->
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<script src="https://code.jquery.com/jquery-latest.js"></script>
 
-<html>
-  <!--반드시 있어야 할 것(jsp페이지에 이것만 추가후 디자인 시작)-->
-<link rel="stylesheet" href="https://bootswatch.com/4/minty/bootstrap.css">
-<link rel="stylesheet" href="https://bootswatch.com/4/minty/bootstrap.min.css">
-<!--자바스크립트로 -->   
 <head>
    <style>
   		<!-- 좌석 디자인 --> 
@@ -71,6 +70,8 @@
         #mantotal{
             height:20px;
         }
+
+        
     </style>
  
     <script src="https://code.jquery.com/jquery-latest.js"></script>
@@ -138,12 +139,22 @@
         	var total=Number(0);
         	
             $("#man").on("click", function(){
+            	
 				$("#select > input[type=hidden]").remove();		//이 것에 해당하는 input태그를 지운다.
                 //인원수 계산
              	var adult = document.getElementById("adult").value;	//select에서 선택한 값 가져오기
                 var child = document.getElementById("child").value;	//select에서 선택한 값 가져오기
                 var senior = document.getElementById("senior").value;	//select에서 선택한 값 가져오기
                 var temp = Number(adult)+Number(child)+Number(senior);
+                
+       	  	    // 숫자만인지 체크하는 정규식
+                regNumber = /^[0-9]*$/;
+                if(!regNumber.test(temp)) {
+                    alert('인원 수를 숫자로 입력해주세요.');
+                    return;
+                }
+                
+          	 	total = temp;
                 //입력 인원수가 기준인원 초과시 좌석선택창을 보여주지 않는다.
                 if(total>8){
                     alert("8명을 초과할 수 없습니다.");
@@ -154,6 +165,7 @@
                 //정상적인 인원입력이라면 ajax로 상영관의 좌석을 보여준다.
                 if(total<=8){
                 //ajax
+                 $("#nextpagebtn").attr("style","display:inline")
                  $(".screen").css("visibility","visible");
 				 $(".seat-wrap").css("visibility","visible");
 // 				 console.log('${screenid}')
@@ -200,11 +212,10 @@
 
 <body>
     <div class="empty-row"></div>
-    <div class="form-group">
+    <div class="container-50 out-align-center">
         <form action ="<c:url value='/payment'/>" method="get">
-          <fieldset>
-            <div class="container">
-              <h1 class="text-center">좌석 선택하기</h1>
+ 
+        <h1 class="font-big" style="font-size: 40px; color:rgb(255,0,127);"><b>좌석 선택하기</b></h1>
               <!--인원선택-->    
               <div class="form-group">
                   <label class="col-form-label" for="adult">성인</label>
@@ -215,13 +226,12 @@
                   <input type="text" name ="senior"  class="form-control" placeholder="인원수 입력 ex) 3" value="0" id="senior">
                   <div id="mantotal"></div>
                 </div>
-              <button type="button" class="btn btn-info" id="man">인원 선택 완료</button>
-                <input type = "hidden" name="theaterid" value="${theaterid}"><br>
-                <input type = "hidden" name="movieid" value="${movieid}" ><br>
-                <input type = "hidden" name="scheduleid" value="${scheduleid}" ><br>
-                <input type = "hidden" name="screenid" value="${screenid}" ><br>
-              <br>
                 
+               <div class="row"><input type="button" id="man" class="special form-btn-full" value="인원 선택 완료"></div>
+                <input type = "hidden" name="theaterid" value="${theaterid}">
+                <input type = "hidden" name="movieid" value="${movieid}" ><br>
+                <input type = "hidden" name="scheduleid" value="${scheduleid}">
+                <input type = "hidden" name="screenid" value="${screenid}" ><br>
                <!-- 좌석 뿌려주기 -->
                    <div class="screen">screen</div>
 				    <div class="empty-row"></div>
@@ -236,17 +246,18 @@
 						</c:forEach>
 					</div>
 				   <div class="empty-row"></div>
-				   <div class="empty-row"></div>
-				   
      
+               <div class="row"><input type="submit" id="nextpagebtn" class="special form-btn-full" value="다음 단계로" style="display:none"></div>  							
               
-               <button type="submit" class="btn btn-info">다음 단계로 </button>
-            </div>
             	<div id="select"></div>
-            
-          </fieldset>
         </form>
-    </div>
+       </div>
 </body>
 
 </html>
+
+
+
+<jsp:include page="/WEB-INF/view/design/footer.jsp"></jsp:include>
+
+	
