@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="/WEB-INF/view/design/nav.jsp"></jsp:include>
+
+
 <html>
   <!--반드시 있어야 할 것(jsp페이지에 이것만 추가후 디자인 시작)-->
 <link rel="stylesheet" href="https://bootswatch.com/4/minty/bootstrap.css">
@@ -73,7 +75,12 @@
  
     <script src="https://code.jquery.com/jquery-latest.js"></script>
     <script>
-    
+    	//다음 페이지 뒤로가기 방지
+		window.history.forward();
+		function noBack() {
+			window.history.forward();
+		}
+
     	//상영관 좌석 배치도 가져오는 함수(ajax이용한다.)
 	    function seatlist(screenid){
 	    	$.ajax({

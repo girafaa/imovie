@@ -8,7 +8,7 @@
 
         <div class="empty-row"></div>
         <div class="empty-row"></div>
-    <div class="container-50 out-align-center">
+    <div class="container-80 out-align-center">
         	<h3 class="in-align-center">로그인</h3>
 								<form method="post" id="loginForm" action="<c:url value='/login'/>">
 									<div class="row uniform 50%">

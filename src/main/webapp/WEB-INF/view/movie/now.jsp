@@ -25,9 +25,14 @@
     <body>
     	<div class="empty-row"></div>
         <div class="text-right" style="margin-right: 20px;">
+        
+         <c:if test="${loginGrade=='영화사'||loginGrade=='관리자'}">
             <a class="btn btn-outline-primary" href='<c:url value="/movie/register"/>'>영화 등록</a>
             <a class="btn btn-outline-secondary" href='<c:url value="/movie/mylist"/>'>나의 영화 리스트</a>
+         </c:if>
+         <c:if test="${loginGrade=='관리자'}">
             <a class="btn btn-outline-info" href='<c:url value="/movie/list"/>'>영화사별 검색(관리자용)</a>
+         </c:if>
         </div>
         <div class="empty-row"></div>
         <div class="area">

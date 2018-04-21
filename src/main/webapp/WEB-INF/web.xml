@@ -105,7 +105,9 @@
 		<filter-name>ManagerFilter</filter-name>
 		<url-pattern>/schedule/*</url-pattern>
 		<url-pattern>/screen/*</url-pattern>
-		<url-pattern>/seat/*</url-pattern>
+		<url-pattern>/seat/register</url-pattern>
+		<url-pattern>/seat/edit</url-pattern>
+		<url-pattern>/seat/delete</url-pattern>
 		<url-pattern>/theater/delete</url-pattern>
 		<url-pattern>/theater/edit</url-pattern>
 		<url-pattern>/theater/my</url-pattern>

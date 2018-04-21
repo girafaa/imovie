@@ -28,7 +28,10 @@
 									<li><a href="<c:url value='/qna'/>">질문과 답변</a></li>
 								</ul>
                             </li>
-                            <li><a href="<c:url value='/movie'/>">영화관리</a></li>	
+                            <c:if test="${loginGrade=='영화사'||loginGrade=='관리자'}">
+                         	   <li><a href="<c:url value='/movie'/>">영화관리</a></li>
+                            </c:if>	
+                            <c:if test="${loginGrade=='지점장'||loginGrade=='관리자'}">
 							<li>
 							    <a href="<c:url value='/theater'/>">영화관관리</a>
                             	<ul>			
@@ -37,7 +40,11 @@
 									<li><a href="<c:url value='/seat'/>">좌석관리</a></li>
 								</ul>
                             </li>
+                            </c:if>	
+                            
+                            <c:if test="${loginGrade=='관리자'}">
 							<li><a href="<c:url value='/admin'/>">관리자</a></li>
+							</c:if>
 							<c:if test="${sessionScope.loginId == null}">
 							<li><a href="<c:url value='/login'/>" class="button special">로그인</a></li>
 							</c:if>
