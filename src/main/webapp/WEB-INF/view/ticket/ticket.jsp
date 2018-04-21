@@ -9,34 +9,9 @@
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <head>
     <style> 
-
-		.font-black{
-			color:black;
-		}
-
- 	    #nav, #page-wrapper, #logo{ 
- 	    	background-color: rgb(249,246,236); 
- 	    	color:black; 
- 	    } 
-	    form{
-	    	background-color: rgb(249,246,236);
-	    	color:black;
-	    }
-	    select >option{
-        	background-color:white;
-	    	color:black;
-	    }
-    
-    
-        .emptysmall{
-            height: 10px;
-        }
-        .empty-row{
-            height: 50px;
-        }
-        select{
-        	height: 120px;
-        }
+    	select{
+    		height:150px;
+    	}
     </style>
 	<script src="https://code.jquery.com/jquery-latest.js"></script>
     <script>
@@ -87,16 +62,16 @@
     <div class="empty-row"></div>
     <div class="container-50 out-align-center">
         <form action="<c:url value='/selectseat'/>" method="post">
-              <h1 class="font-big" style="font-size: 40px; color: black">예매하기</h1>
+              <h1 class="font-big" style="font-size: 40px;">예매하기</h1>
               <!--영화선택-->    
-              <div class="row font-big">영화 고르기</div>
+              <div class="row font-big" >영화 고르기</div>
               <select multiple="" name="movieid" class="form-control" id="movieselect" required>
             	<c:forEach var="movie" items="${movielist}">
             		<option value="${movie.id}">${movie.title}</option>
             	</c:forEach>
               </select>
 
-              <div class="row">영화관 고르기</div>    
+              <div class="row" >영화관 고르기</div>    
               <select multiple="" name="theaterid" class="form-control" id="theaterselect" required>
             	<c:forEach var="theater" items="${theaterlist}">
             		<option value="${theater.id}">${theater.name}</option>

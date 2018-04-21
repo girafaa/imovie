@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.security.PrivateKey;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -62,7 +63,7 @@ public class MemberController {
 
 	@RequestMapping(value = "/login",method=RequestMethod.POST)
 	public String login(String id, String pw, RedirectAttributes ra,Model model) {
-		   // 개인키 취득
+		// 개인키 취득
 	    PrivateKey key = (PrivateKey) session.getAttribute("RSAprivateKey");
 	    if (key == null) {
 	        ra.addFlashAttribute("resultMsg", "비정상 적인 접근 입니다.");		//이게머지
@@ -90,13 +91,30 @@ public class MemberController {
 	    if(loginflag) {
 	    	session.setAttribute("loginId", idOrigin);
 	    	session.setAttribute("loginGrade", memberservice.myinfo(idOrigin).getGrade());
+	    	
+//	    	log.debug("체크여부 : {}",save);
+//			//----- 아이디 저장 쿠키------
+//			Cookie c = new Cookie("saveid",idOrigin);
+//			if(save==null){
+//				//저장 체크안할 시 쿠키 제거			
+//				c.setMaxAge(0);	
+//			}
+//			else{
+//				c.setMaxAge(1*24*60*60);
+//			}
+//				c.setPath("/home");
+//				response.addCookie(c);	
+//	    	
+	    	
+	    	
 	    }else {
 	        ra.addFlashAttribute("resultMsg", "로그인실패");
 	    	return "redirect:/login";
 	    }
 		return "redirect:/";
 	}
-//--------------------------------------------------------------------------
+	
+	
 	
 	@RequestMapping("/register")
 	public String register() {

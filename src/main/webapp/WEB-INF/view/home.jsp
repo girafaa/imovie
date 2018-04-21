@@ -48,8 +48,8 @@
 				<div id="main" class="wrapper style1">
 					<div class="container">
 						<header class="major">
-							<h2>IMOVIE</h2>
-							<p>I LOVE MOVIE</p>
+							<h2>Movie   Project</h2>
+							<p>개발 연습하는 영화 홈페이지입니다 : )  어벤져스 보실 수 없어요! </p>
 						</header>
 						<div class="area">
                             <div class="swiper-container">

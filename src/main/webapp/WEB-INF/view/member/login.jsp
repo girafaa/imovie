@@ -18,13 +18,14 @@
 										<div class="12u$">
 											<input type="password" name="pw" id="pw" value="" placeholder="비밀번호" required />
 										</div>
-										<div class="4u 12u$(medium)">
-											<input type="checkbox" id="priority-low" name="priority" checked>
-											<label for="priority-low">아이디저장</label>
-										</div>
+										
+<!-- 										<div class="4u 12u$(medium)"> -->
+<!-- <!-- 											<input type="checkbox" name="save" id="priority-low" value="1"> -->
+<!-- <!-- 											<label for="priority-low">아이디저장</label> -->
+<!-- 										</div> -->
 										<div class="12u$ in-align-center">
-												<input type="submit" value="로 그 인" class="special" style="width: 49%;display: inline-block;"/></li>
-												<a href="<c:url value='/register'/>"><input type="button" style="width: 49%;display: inline-block;" value="회원가입"/></a></li>
+												<input type="submit" value="로 그 인" class="special" style="width: 49%;display: inline-block;"/>
+												<a href="<c:url value='/register'/>"><input type="button" style="width: 49%;display: inline-block;" value="회원가입"/></a>
 										</div>
 									</div>
 								</form>

@@ -1,0 +1,104 @@
+/*占쎈뮞占쏙옙占쎌뵬占쎈뻻占쎈뱜�몴占� 筌띾슢諭억옙堉김퉪�똻�쁽.*/
+
+@charset "UTF-8";
+
+/*-------------------------------筌띻낱寃� 占쎈뮞占쏙옙占쎌뵬-------------------------------*/
+a{
+    text-decoration: none;
+    color: black;
+}
+a:hover{
+    color: blue;
+}
+
+/*占쎈�믭옙�뵠�뇡占� 占쎈뮞占쏙옙占쎌뵬 */
+
+/*-------------------------------占쎈쨲 占쎈뮞占쏙옙占쎌뵬-------------------------------*/
+
+/*占쎌뿯占쎌젾筌∽옙*/
+/*
+占쎈：100%筌욎뮆�봺占쎌삂
+占쎌뵥占쎌뵬占쎌뵥(inline)占쎌뒠 �뤃�됲뀋
+*/
+.form-input, .form-btn{
+/*    占쎌뵥占쎌뵬占쎌뵥占쎌뒠*/
+    font-size: 25px;
+    padding: 10px;
+    
+    border: 1px solid black;
+}
+.form-input-full, .form-btn-full{
+    width: 100%;
+}
+
+
+
+
+/*甕곌쑵�뱣*/
+.form-btn{
+    background-color: lightblue;
+}
+
+
+
+
+/*-------------------------------占쎌겫占쎈열 占쎈뮞占쏙옙占쎌뵬------------------------------
+
+div占쎌벥 占쎌넇占쎌삢
+nav: 筌롫뗀�뤀占쎌뒠
+main: 筌롫뗄�뵥占쎈읂占쎌뵠筌욑옙
+...
+*/
+div, nav, header, footer, aside, article, section, main{
+/*    占쎈�믭옙�뮞占쎈뱜占쎌뒠 占쎈�믭옙紐®뵳占� �빊遺쏙옙*/
+}
+
+/*占쎌겫占쎈열占쎌뱽 �뜮袁⑹몛癰귢쑬以� 筌욑옙占쎌젟*/
+.container-10{width:10%;}
+.container-20{width:20%;}
+.container-30{width:30%;}
+.container-40{width:40%;}
+.container-50{width:50%;}
+.container-60{width:60%;}
+.container-70{width:70%;}
+.container-80{width:80%;}
+.container-90{width:90%;}
+.container-100{width:100%;}
+
+/* �뚢뫂�믭옙�뵠占쎄섐 占쎌젟占쎌졊 : out-align-? */
+.out-align-left{}
+.out-align-center{margin: auto;}
+.out-align-right{}
+
+/* 占쎄땀占쎌뒠�눧占� 占쎌젟占쎌졊 : in-align-? */
+.in-align-left{text-align: left;}
+.in-align-center{text-align: center;}
+.in-align-right{text-align: right;}
+
+
+
+/*�⑤벉媛� 餓ο옙*/
+.empty-row{height: 50px;}
+
+.row{margin:10px; }/* 占쎌맄占쎈툡占쎌삋 占쎌뒄占쎈꺖 餓κ쑨�럡�겫占� 占쎌맄占쎈퉸 */
+
+
+/*
+疫뀐옙�몭占� 占쎌읅占쎌뒠(占쎈선占쎈샥占쎈읂占쎌뵠筌욑옙占쎈쐲揶쏄쑴肉� 占쎌삋 占쎌읅占쎌뒠占쎈┷占쎈즲嚥∽옙 占쎈립占쎈뼄占쎈뮉占쎈쑓... 
+占쎈섧占쎌젫 占쎌읅占쎌뒠占쎌뵠 占쎈툧占쎈┷占쎈뮉 筌욑옙占쎈뮉 占쎈툡筌욑옙 占쎌삋 筌뤴뫀�뀮野껋쥓�뼄.)
+
+
+*/
+
+/*
+湲��옄 �겕湲�
+*/
+.font-big{
+	size: 3em;
+}
+.font-middle{
+	size: 1.5em;
+}
+.font-small{
+	size: 0.5em;
+}
