@@ -44,11 +44,12 @@ public class MemberController {
 	
 	@RequestMapping("/login")
 	public String login(Model model) throws IOException {
-	    // RSA 키 생성
+		//기존에 RSA 키 존재 여부 확인
 	    PrivateKey key = (PrivateKey) session.getAttribute("RSAprivateKey");
 	    if (key != null) { // 기존 key 파기
 	        session.removeAttribute("RSAprivateKey");
 	    }
+	    // RSA 키 생성
 	    RSA rsa = rsaUtil.createRSA();		//새로운 키값 가진 rsa생성
 	    model.addAttribute("modulus", rsa.getModulus());	
 	    model.addAttribute("exponent", rsa.getExponent());
@@ -140,25 +141,19 @@ public class MemberController {
 		return "member/myInfo";
 	}
 	@RequestMapping("/edit")
-	public String edit(Model model) {
-		boolean nowLogin =false;
-		try {
-			nowLogin = (boolean)session.getAttribute("loginCondition");
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		if(!nowLogin) {
-			log.debug("먼저 로그인 해주세요");
-			model.addAttribute("re_login_myInfo", true);
-			return "member/login";
-			}
+	public String edit(HttpSession session, Model model) {
+		String loginid = (String)session.getAttribute("loginId");
+		Member member = memberservice.myinfo(loginid);
+		model.addAttribute("member",member);
 		return "member/edit";
 	}
 	
 	@RequestMapping(value="edit", method=RequestMethod.POST)
-	public String edit(String id,String pw,String phone,String email) {
+	public String edit(String id,String pw,String phone,String email,HttpSession session,Model model) {
 		memberservice.edit(id, pw, phone, email);
-		session.setAttribute("myInfo", memberservice.myinfo(id));
+		String loginid = (String)session.getAttribute("loginId");
+		Member member = memberservice.myinfo(loginid);
+		model.addAttribute("member",member);
 		return "member/myInfo";
 	}
 	

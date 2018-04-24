@@ -32,21 +32,8 @@
 			history.back();
 		</script>
 	</c:if>
-	<c:choose>
-	<c:when test="${sessionScope.loginGrade eq 'admin' or sessionScope.loginGrade eq '관리자'}">
-		<form action="<c:url value='/noticewrite'></c:url>">
-			<div align="center">
-				<button type="submit" class="btn btn-outline-secondary"
-					style="position: relative; left: 360px;">글쓰기</button>
-			</div>
-		</form>
-	</c:when>
 	
-	<c:otherwise>
-		<br><br>
-	</c:otherwise>
-	
-	</c:choose>
+
 
 	<!--전체를 감는 div-->
 <link rel="stylesheet" href="assets/css/main.css" />
@@ -71,7 +58,16 @@
 </style>
   <div id="main" class="wrapper style1">
 	<div class="out-align-center in-align-center table-wrapper ">
-        <h1 class="in-align-center">공지사항</h1>
+              <h1 class="font-big" style="font-size: 40px;">공지사항</h1>
+        	
+		<c:if test="${sessionScope.loginGrade eq 'admin' or sessionScope.loginGrade eq '관리자'}">
+			<form action="<c:url value='/noticewrite'></c:url>">
+				<div align="right">
+					<input type="submit" class="btn small" value="글쓰기">
+				</div>
+			</form>
+		</c:if>
+	
       <table id="table">
       	<thead>
       			<tr>
@@ -87,7 +83,7 @@
 						<td>${noticeitem.no}</td>
 						<td><font color="gray" size="2">[${noticeitem.head}]</font> <a
 							href="<c:url value='/noticeShow'></c:url>?no=${noticeitem.no}">${noticeitem.title}</a></td>
-						<td>${noticeitem.reg}</td>
+						<td>${fn:substring(noticeitem.reg, 0, 10)}</td>
 						<td>${noticeitem.read}</td>
 					</tr>
 				</c:forEach>

@@ -63,12 +63,22 @@ public class MemberDaoImpl implements MemberDao{
 
 	@Override
 	public void edit(Member member) {
-		//pw, phone ,email 변경가능 
-		String sql = "update member set pw=?, phone=?, email=? where id=?";//id로 검색
-		Object[] args = {member.getPw(),member.getPhone(),member.getEmail(),member.getId()};
-		int rs=jdbcTemplate.update(sql,args);
-		log.debug("rs={}",rs>0?"성공":"실패");
+		//입력받은 비밀번호가 없을 경우
+		if(member.getPw()==null) {
+			String sql = "update member set phone=?, email=? where id=?";//id로 검색
+			Object[] args = {member.getPhone(),member.getEmail(),member.getId()};
+			log.debug("수정할 정보 : {}",member.getPhone(), member);
+			int rs = jdbcTemplate.update(sql,args);
+			log.debug("수정 결과={}",rs>0?"성공":"실패");
+		}else {
+			String sql = "update member set pw=?, phone=?, email=? where id=?";//id로 검색
+			Object[] args = {member.getPw(),member.getPhone(),member.getEmail(),member.getId()};
+			int rs=jdbcTemplate.update(sql,args);
+			log.debug("수정 결과={}",rs>0?"성공":"실패");
+		}
+			
 	}
+		
 
 	@Override
 	public boolean delete(String id, String pw) {

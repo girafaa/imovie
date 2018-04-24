@@ -113,7 +113,7 @@
 				<div class="empty-row"></div>
 	  <div id="main" class="wrapper style1">
 	<div class="out-align-center in-align-center table-wrapper ">
-        <h1 class="in-align-center">질문과 답변</h1>
+              <h1 class="font-big" style="font-size: 40px;">질문과 답변</h1>
       <table id="table">
       	<thead>
       			<tr>
@@ -136,7 +136,7 @@
 								<font color="red" size="2">[비밀글]</font>
 							</c:if></td>
 						<td>${qnaitem.writerId}</td>
-						<td>${qnaitem.reg}</td>
+						<td>${fn:substring(qnaitem.reg, 0, 10)}</td>
 						<td>${qnaitem.read}</td>
 					</tr>
 				</c:forEach>
